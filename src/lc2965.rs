@@ -9,8 +9,7 @@ impl Solution {
                 xor_all ^= *number;
             }
         }
-        let low_bit = xor_all ^ -xor_all;
-        let mut repeated = 0;
+        let repeated = 0;
 
         // assert_eq!(occured.len(), 1);
         // let missing = occured.into_iter().next().unwrap();

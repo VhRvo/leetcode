@@ -49,7 +49,6 @@ impl Solution {
     //     }
     // }
     pub fn distribute_candies(n: i32, limit: i32) -> i32 {
-        let mut result = 0;
         let no_candies = n as usize;
         let no_children = 3;
         let limit = limit as usize;
