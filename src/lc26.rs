@@ -1,9 +1,10 @@
-use std::cell::Cell;
-
 struct Solution;
+
 impl Solution {
     pub fn remove_duplicates(nums: &mut Vec<i32>) -> i32 {
-        nums.dedup();
+        use std::cell::Cell;
+
+        // nums.dedup();
         let nums = Cell::from_mut(nums.as_mut_slice()).as_slice_of_cells();
         match nums {
             [first, rest @ ..] => {

@@ -1,10 +1,10 @@
 struct Solution;
 
-use std::collections::hash_map::Entry;
-use std::collections::{HashMap, VecDeque};
-
 impl Solution {
     pub fn first_uniq_char(s: String) -> i32 {
+        use std::collections::hash_map::Entry;
+        use std::collections::{HashMap, VecDeque};
+
         let mut hash_map = HashMap::new();
         let mut queue = VecDeque::new();
         for (ii, ch) in s.chars().enumerate() {

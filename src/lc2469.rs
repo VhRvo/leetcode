@@ -1,4 +1,5 @@
 struct Solution;
+
 impl Solution {
     pub fn convert_temperature(celsius: f64) -> Vec<f64> {
         let kelvin = celsius + 273.15;

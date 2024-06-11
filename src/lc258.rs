@@ -1,4 +1,5 @@
 struct Solution;
+
 impl Solution {
     pub fn add_digits(num: i32) -> i32 {
         let mut value = num;

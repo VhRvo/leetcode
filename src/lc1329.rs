@@ -1,4 +1,5 @@
 struct Solution;
+
 impl Solution {
     pub fn diagonal_sort(mut mat: Vec<Vec<i32>>) -> Vec<Vec<i32>> {
         let rows = mat.len();

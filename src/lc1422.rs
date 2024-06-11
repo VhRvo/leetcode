@@ -1,8 +1,9 @@
-use std::cell::Cell;
-
 struct Solution;
+
 impl Solution {
     pub fn max_score(s: String) -> i32 {
+        use std::cell::Cell;
+
         let length = s.len();
         let mut suffix = vec![0; length];
         let mut prefix = vec![0; length];

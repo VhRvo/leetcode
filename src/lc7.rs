@@ -1,8 +1,9 @@
-use std::ops::Mul;
-
 struct Solution;
+
 impl Solution {
     pub fn reverse(x: i32) -> i32 {
+        use std::ops::Mul;
+
         fn helper(mut x: i32) -> Option<i32> {
             let mut result = 0_i32;
             while (x) != 0 {

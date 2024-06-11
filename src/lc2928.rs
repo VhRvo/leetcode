@@ -1,7 +1,5 @@
 struct Solution;
 
-use std::collections::HashMap;
-
 #[derive(Hash, Eq, PartialEq, Copy, Clone)]
 struct Rest {
     children: i32,

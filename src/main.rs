@@ -60,9 +60,9 @@ mod lc709;
 mod lc852;
 mod lc867;
 mod lc881;
+mod lc974;
 mod lcr;
 mod lcr185;
-mod lc974;
 
 fn main() {
     lc264::main();

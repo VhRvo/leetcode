@@ -1,18 +1,19 @@
-use std::ops::Div;
-
 struct Solution;
+
 impl Solution {
     // pub fn rotate(matrix: &mut Vec<Vec<i32>>) {
     //     let width = matrix.len();
     //     let half = width / 2;
-    //     for lo in 0..half {
+    //     for lo in 0. .half {
     //         let hi = width - lo;
     //         for _ in (lo .. hi - 1) {
     //             rotate(lo, hi, matrix);
     //         }
     //     }
     // }
-    pub fn rotate(matrix: &mut Vec<Vec<i32>>) {
+    pub fn rotate(matrix: &mut [Vec<i32>]) {
+        use std::ops::Div;
+
         // matrix[i][j] -> matrix[j][n - i - 1]
         let width = matrix.len();
         let row_half = (width as f64).div(2.0).floor() as usize;

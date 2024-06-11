@@ -1,4 +1,5 @@
 struct Solution;
+
 impl Solution {
     #[inline]
     fn low_bit(number: i32) -> i32 {

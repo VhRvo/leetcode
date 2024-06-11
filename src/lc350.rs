@@ -28,6 +28,7 @@ fn merge(result: &mut Vec<i32>, mut left: Iter<i32>, mut right: Iter<i32>) {
         }
     }
 }
+
 fn merge_already_known_one(
     result: &mut Vec<i32>,
     value: i32,

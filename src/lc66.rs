@@ -1,4 +1,5 @@
 struct Solution;
+
 impl Solution {
     pub fn plus_one(mut digits: Vec<i32>) -> Vec<i32> {
         digits.reverse();

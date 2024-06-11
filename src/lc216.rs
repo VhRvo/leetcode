@@ -1,4 +1,5 @@
 struct Solution;
+
 impl Solution {
     fn backtracing(
         current: i32,

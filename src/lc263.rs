@@ -1,4 +1,5 @@
 struct Solution;
+
 impl Solution {
     pub fn is_ugly(n: i32) -> bool {
         if n.is_positive() {

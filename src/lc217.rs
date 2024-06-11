@@ -1,8 +1,9 @@
-use std::collections::HashSet;
-
 struct Solution;
+
 impl Solution {
     pub fn contains_duplicate(nums: Vec<i32>) -> bool {
+        use std::collections::HashSet;
+
         let mut set = HashSet::new();
         nums.iter().any(|num| !set.insert(num))
         // struct Empty;

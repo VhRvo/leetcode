@@ -1,8 +1,9 @@
-use std::collections::HashMap;
-
 struct Solution;
+
 impl Solution {
     pub fn num_identical_pairs(nums: Vec<i32>) -> i32 {
+        use std::collections::HashMap;
+
         nums.iter()
             .fold(
                 (0, HashMap::<i32, usize>::new()),

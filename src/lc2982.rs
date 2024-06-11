@@ -1,17 +1,17 @@
 struct Solution;
 
-use std::cmp::Reverse;
-use std::collections::{BinaryHeap, HashMap};
-use std::mem;
-
 impl Solution {
     pub fn maximum_length(s: String) -> i32 {
         Self::general_maximum_length(s, 3)
     }
     fn general_maximum_length(s: String, k: usize) -> i32 {
+        use std::cmp::Reverse;
+        use std::collections::{BinaryHeap, HashMap};
+        use std::mem;
+
         let mut s_iter = s.chars();
         let mut char_lengths_map = HashMap::new();
-        let mut process = |ch, mut current_length| {
+        let mut process = |ch, current_length| {
             let lengths = char_lengths_map.entry(ch).or_insert(BinaryHeap::new());
             lengths.push(Reverse(current_length));
             while lengths.len() > k {

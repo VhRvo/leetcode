@@ -1,4 +1,5 @@
 struct Solution;
+
 impl Solution {
     pub fn peak_index_in_mountain_array(arr: Vec<i32>) -> i32 {
         fn binary_search(arr: &[i32], left: usize, right: usize) -> usize {
