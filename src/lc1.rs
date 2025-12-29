@@ -5,9 +5,10 @@ impl Solution {
         use std::collections::HashMap;
 
         let mut hash_map = HashMap::new();
-        for (index, num) in nums.iter().enumerate() {
-            if let Some(&jj) = hash_map.get(&(target - num)) {
-                return vec![index as i32, jj as i32];
+        for (index, num) in nums.into_iter().enumerate() {
+            let index = index as i32;
+            if let Some(jj) = hash_map.get(&(target - num)).copied() {
+                return vec![index, jj];
             }
             hash_map.insert(num, index);
         }

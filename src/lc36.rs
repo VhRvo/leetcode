@@ -25,12 +25,10 @@ const BLOCK_STARTS: &[(usize, usize)] = &[
 
 impl Solution {
     fn is_row_valid(digits: &[char]) -> bool {
-        // let mut hash_set = HashSet::new();
         let mut bit_set: u16 = 0;
         for &digit in digits {
             if digit.is_numeric() {
                 let mask: u16 = 1 << digit.to_digit(10).unwrap();
-                // println!("{bit_set} {digit} {mask}");
                 if (bit_set & mask) != 0 {
                     return false;
                 }

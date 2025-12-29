@@ -8,11 +8,5 @@ impl Solution {
             .skip_while(|&&ch| ch == b' ')
             .take_while(|&&ch| ch != b' ')
             .count() as i32
-        // s.trim()
-        //     .split(" ")
-        //     .collect::<Vec<_>>()
-        //     .last()
-        //     .unwrap()
-        //     .len() as i32
     }
 }
