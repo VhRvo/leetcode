@@ -45,7 +45,9 @@ impl Solution {
 
             // Or use binary search
             let next_pos = num_counts[i + 1..num_counts.len()]
-                .partition_point(|(num, _)| num_counts[i].0 + 1 >= *num) + i + 1;
+                .partition_point(|(num, _)| num_counts[i].0 + 1 >= *num)
+                + i
+                + 1;
 
             let earn = num_counts[i].0 * num_counts[i].1;
             dp[i] = dp[i].max(earn + dp[next_pos]);
