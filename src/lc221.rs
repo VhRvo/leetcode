@@ -2,18 +2,20 @@ struct Solution;
 
 impl Solution {
     pub fn maximal_square(matrix: Vec<Vec<char>>) -> i32 {
-        let rows = matrix.len();
         let columns = matrix[0].len();
-        let mut dp = vec![vec![0; columns + 1]; rows + 1];
+        let mut dp = vec![vec![0; columns + 1]; 2];
         let mut result = 0;
 
         for (ii, row) in (1..).zip(matrix.iter()) {
-            for (jj, &element) in (1..).zip(row.iter()) {
+            let current = ii % 2;
+            let prev = (ii - 1) % 2;
+            for (jj, &element) in (1..=columns).zip(row.iter()) {
+                dp[current][jj] = 0;
                 if element == '0' {
                     continue;
                 }
-                dp[ii][jj] = dp[ii - 1][jj - 1].min(dp[ii - 1][jj]).min(dp[ii][jj - 1]) + 1;
-                result = result.max(dp[ii][jj]);
+                dp[current][jj] = dp[prev][jj - 1].min(dp[prev][jj]).min(dp[current][jj - 1]) + 1;
+                result = result.max(dp[current][jj]);
             }
         }
         (result * result) as i32
