@@ -7,12 +7,12 @@ impl Solution {
         let mut dp = vec![vec![0; columns + 1]; rows + 1];
         let mut result = 0;
 
-        for (ii, row) in matrix.iter().enumerate().rev() {
-            for (jj, &element) in row.iter().enumerate().rev() {
+        for (ii, row) in (1..).zip(matrix.iter()) {
+            for (jj, &element) in (1..).zip(row.iter()) {
                 if element == '0' {
                     continue;
                 }
-                dp[ii][jj] = dp[ii + 1][jj + 1].min(dp[ii][jj + 1]).min(dp[ii + 1][jj]) + 1;
+                dp[ii][jj] = dp[ii - 1][jj - 1].min(dp[ii - 1][jj]).min(dp[ii][jj - 1]) + 1;
                 result = result.max(dp[ii][jj]);
             }
         }
