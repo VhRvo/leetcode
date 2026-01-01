@@ -25,6 +25,7 @@ impl Solution {
             }
             connection
         };
+        println!("{:?}", connection);
         let mut row_count = vec![0; row + 2];
         let mut result = 0;
         'outer:
@@ -41,11 +42,17 @@ impl Solution {
             for (x_offset, y_offset) in [(0, 1), (0, -1), (1, 0), (-1, 0)] {
                 let new_x = (x as isize + x_offset) as usize;
                 let new_y = (y as isize + y_offset) as usize;
+                if new_x < 1 || new_x > row || new_y < 1 || new_y > col {
+                    continue;
+                }
                 if connection[new_x][new_y] == 0 {
                     continue;
                 }
                 connection[new_x][new_y] -= 1;
                 if connection[new_x][new_y] == 0 {
+                    continue;
+                }
+                if connection[new_x][new_y] > 1 {
                     continue;
                 }
                 row_count[new_x] += 1;
@@ -55,7 +62,7 @@ impl Solution {
             }
             result += 1;
         }
-
+        println!("{:?}", connection);
         result
 
     }
