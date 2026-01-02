@@ -1,18 +1,21 @@
 struct Solution;
 
 impl Solution {
-    pub fn repeated_n_times(mut nums: Vec<i32>) -> i32 {
-        nums.sort();
-        let n = nums.len() / 2;
-        let (a, b, c, d) = (nums[n - 2], nums[n - 1], nums[n], nums[n + 1]);
-        if b == c {
-            return b;
-        } else if a == b {
-            return a;
-        } else if c == d {
-            return c;
+    pub fn repeated_n_times(nums: Vec<i32>) -> i32 {
+        let mut window = [nums[0], nums[1]];
+        if window[0] == window[1] {
+            return window[0];
         }
-        unreachable!()
+        if window.contains(&nums[3]) {
+            return nums[3];
+        }
+        for i in 2..nums.len() {
+            if window.contains(&nums[i]) {
+                return nums[i];
+            }
+            window[i % 2] = nums[i];
+        }
+        unreachable!();
     }
 }
 
