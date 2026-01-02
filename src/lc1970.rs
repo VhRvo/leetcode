@@ -1,70 +1,111 @@
 struct Solution;
 
 impl Solution {
+    fn update_upwards(
+        connection: &mut [Vec<i32>],
+        row_count: &mut [usize],
+        col: usize,
+        x: usize,
+        y: usize,
+    ) -> bool {
+        if connection[x][y] == 0 {
+            row_count[x] += 1;
+            if row_count[x] == col {
+                return true;
+            }
+            // upwards
+            if x != 0 {
+                let new_x = x - 1;
+                let new_y = y;
+                if connection[new_x][new_y] != 0 {
+                    connection[new_x][new_y] -= 1;
+                    // if connection[new_x][new_y] == 0 {
+                    //     row_count[new_x] += 1;
+                    //     if row_count[new_x] == col {
+                    //         return true;
+                    //     }
+                    // }
+                    return Self::update_upwards(connection, row_count, col, new_x, new_y);
+                }
+            }
+        }
+        return false;
+    }
     pub fn latest_day_to_cross(row: i32, col: i32, cells: Vec<Vec<i32>>) -> i32 {
         let row = row as usize;
         let col = col as usize;
+        let contains = |x: usize, y: usize| 1 <= x && x <= row && 1 <= y && y <= col;
         let mut connection = {
-            let mut connection = vec![vec![0; col + 2]; row + 2];
-            connection[1][1] = 2;
-            connection[1][col] = 2;
-            connection[row][1] = 2;
-            connection[row][col] = 2;
-            for ii in 2..row {
-                connection[ii][1] = 3;
-                connection[ii][col] = 3;
+            let mut connection = vec![vec![0; col + 1]; row + 1];
+            for jj in 1..=col {
+                connection[0][jj] = 1;
             }
-            for jj in 2..col {
-                connection[1][jj] = 3;
-                connection[row][jj] = 3;
-            }
-            for ii in 2..row {
+            for ii in 1..=row {
+                connection[ii][1] = 2;
+                connection[ii][col] = 2;
                 for jj in 2..col {
-                    connection[ii][jj] = 4;
+                    connection[ii][jj] = 3;
                 }
             }
             connection
         };
         println!("{:?}", connection);
-        let mut row_count = vec![0; row + 2];
+        let mut row_count = vec![0; row + 1];
         let mut result = 0;
-        'outer:
-        for cell in cells.iter() {
+        'outer: for cell in cells.iter() {
             let x = cell[0] as usize;
             let y = cell[1] as usize;
-            if connection[x][y] > 1 {
+            if connection[x][y] != 0 {
+                connection[x][y] = 0;
                 row_count[x] += 1;
                 if row_count[x] == col {
-                    break;
+                    break 'outer;
                 }
             }
-            connection[x][y] = 0;
-            for (x_offset, y_offset) in [(0, 1), (0, -1), (1, 0), (-1, 0)] {
+            // left & right
+            for (x_offset, y_offset) in [(0, 1), (0, -1)] {
                 let new_x = (x as isize + x_offset) as usize;
                 let new_y = (y as isize + y_offset) as usize;
-                if new_x < 1 || new_x > row || new_y < 1 || new_y > col {
+                if !contains(new_x, new_y) {
                     continue;
                 }
                 if connection[new_x][new_y] == 0 {
                     continue;
                 }
                 connection[new_x][new_y] -= 1;
-                if connection[new_x][new_y] == 0 {
-                    continue;
-                }
-                if connection[new_x][new_y] > 1 {
-                    continue;
-                }
-                row_count[new_x] += 1;
-                if row_count[new_x] == col {
+                if Self::update_upwards(&mut connection, &mut row_count, col, new_x, new_y) {
                     break 'outer;
                 }
             }
+            {
+                // up
+                let new_x = x - 1;
+                let new_y = y;
+                if connection[new_x][new_y] != 0 {
+                    connection[new_x][new_y] -= 1;
+                    if Self::update_upwards(&mut connection, &mut row_count, col, new_x, new_y) {
+                        break 'outer;
+                    }
+                }
+            }
+            {
+                // down
+                let new_x = x + 1;
+                let new_y = y;
+                if contains(new_x, new_y) && connection[new_x][new_y] != 0 {
+                    connection[new_x][new_y] -= 1;
+                    if connection[new_x][new_y] == 0 {
+                        row_count[new_x] += 1;
+                        if row_count[x] == col {
+                            break 'outer;
+                        }
+                    }
+                }
+            }
+            println!("{:?}", connection);
             result += 1;
         }
-        println!("{:?}", connection);
         result
-
     }
 }
 
@@ -82,7 +123,7 @@ mod tests {
                     .map(|row| row.to_vec())
                     .to_vec()
             ),
-            4
+            2
         );
     }
 
@@ -96,7 +137,7 @@ mod tests {
                     .map(|row| row.to_vec())
                     .to_vec()
             ),
-            4
+            1
         );
     }
 
@@ -120,7 +161,7 @@ mod tests {
                 .map(|row| row.to_vec())
                 .to_vec()
             ),
-            4
+            3
         );
     }
 }
