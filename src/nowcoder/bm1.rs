@@ -35,3 +35,14 @@ impl Solution {
         acc
     }
 }
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test1() {
+    }
+}
+
