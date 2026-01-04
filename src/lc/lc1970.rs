@@ -1,41 +1,55 @@
-use std::vec;
-
 struct Solution;
 
-impl Solution {
-    fn contains(x: usize, y: usize, row: usize, col: usize) -> bool {
-        1 <= x && x <= row && 1 <= y && y <= col
-    }
-    fn spread_modification(
-        connection: &mut [Vec<i32>],
-        row_count: &mut [usize],
-        row: usize,
-        col: usize,
-        x: usize,
-        y: usize,
-    ) -> bool {
-        if connection[x][y] == 0 {
-            row_count[x] += 1;
-            if row_count[x] == col {
-                return true;
-            }
-            // 4 directions
-            for (dx, dy) in [(0, 1), (0, -1), (1, 0), (-1, 0)] {
-                let new_x = (x as isize + dx) as usize;
-                let new_y = (y as isize + dy) as usize;
-                if Self::contains(new_x, new_y, row, col) {
-                    if connection[new_x][new_y] != 0 {
-                        connection[new_x][new_y] -= 1;
-                        if Self::spread_modification(connection, row_count, row, col, new_x, new_y)
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
+struct UnionFind{
+    parent: Vec<usize>,
+    rank: Vec<usize>,
+}
+
+impl UnionFind {
+    pub fn new(n: usize) -> Self {
+        let mut parent = vec![0; n];
+        for (ii, element) in parent.iter_mut().enumerate() {
+            *element = ii;
         }
-        return false;
+        let rank = vec![1; n];
+        UnionFind{
+            parent,
+            rank,
+        }
     }
+
+    pub fn union(&mut self, mut left: usize, mut right: usize) -> usize {
+        left = self.find(left);
+        right = self.find(right);
+        if self.rank[left] < self.rank[right] {
+            self.parent[left] = right;
+            self.rank[right] += self.rank[left];
+            right
+        } else {
+            self.parent[right] = left;
+            self.rank[left] += self.rank[right];
+            left
+        }
+    }
+
+    pub fn is_union(&mut self, left: usize, right: usize) -> bool {
+        self.find(left) == self.find(right)
+    }
+
+    pub fn find(&mut self, mut node: usize) -> usize {
+        let mut stack = Vec::new();
+        while self.parent[node] != node {
+            stack.push(node);
+            node = self.parent[node];
+        }
+        while let Some(child) = stack.pop() {
+            self.parent[child] = node
+        }
+        node
+    }
+}
+
+impl Solution {
     fn print_maze(maze: &[Vec<i32>]) {
         for row in maze.iter().skip(1) {
             println!("{:?}", &row[1..]);
@@ -45,37 +59,47 @@ impl Solution {
     pub fn latest_day_to_cross(row: i32, col: i32, cells: Vec<Vec<i32>>) -> i32 {
         let row = row as usize;
         let col = col as usize;
-        let mut connection = {
-            let mut connection = vec![vec![0; col + 1]; row + 1];
-            for ii in 1..=row {
-                connection[ii][1] = 2;
-                connection[ii][col] = 2;
-                for jj in 2..col {
-                    connection[ii][jj] = 3;
-                }
-            }
-            connection
-        };
-        println!("{:?}", connection);
-        let mut row_count = vec![0; row + 1];
-        let mut result = 0;
-        let mut maze = vec![vec![0; col + 1]; row + 1];
-        for cell in cells.iter() {
+        let mut union_find = UnionFind::new((row + 2) * col);
+
+        let initial = 0;
+        let last = union_find.parent.len() - 1;
+
+        for id in initial + 1..col {
+            union_find.union(initial, id);
+        }
+        for id in last - col + 1..last {
+            union_find.union(id, last);
+        }
+
+        let mut result = (row * col) as i32;
+        let mut maze = vec![vec![0; col]; row + 2];
+        for ii in 0..col {
+            maze[0][ii] = 1;
+            maze[row + 1][ii] = 1;
+        }
+        let directions = [(-1, 0), (1, 0), (0, -1), (0, 1)];
+        for cell in cells.iter().rev() {
+            result -= 1;
             let x = cell[0] as usize;
-            let y = cell[1] as usize;
+            let y = (cell[1] - 1) as usize;
+            let id = x * col + y;
             maze[x][y] = 1;
-            println!("Day: {}", result + 1);
-            Self::print_maze(&maze);
-            if connection[x][y] != 0 {
-                connection[x][y] = 0;
-                if Self::spread_modification(&mut connection, &mut row_count, row, col, x, y) {
-                    break;
+            for (dx, dy) in directions {
+                let new_x = x as i32 + dx;
+                let new_y = y as i32 + dy;
+                if 0 <= new_x && new_x <= row as i32 + 1 && 0 <= new_y && new_y < col as i32 {
+                    let new_x = new_x as usize;
+                    let new_y = new_y as usize;
+                    let neighbor_id = new_x * col + new_y;
+                    if maze[new_x][new_y] == 1 {
+                        union_find.union(id, neighbor_id);
+                    }
                 }
             }
-            println!("{:?}", row_count);
-            Self::print_maze(&connection);
-            // println!("{:?}", connection);
-            result += 1;
+
+            if union_find.is_union(initial, last) {
+                break;
+            }
         }
         result
     }

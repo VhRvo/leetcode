@@ -4,6 +4,7 @@ mod lc1;
 mod lc1017;
 mod lc1052;
 mod lc11;
+mod lc139;
 mod lc1103;
 mod lc1137;
 mod lc1146;
