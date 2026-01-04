@@ -29,7 +29,7 @@ impl Solution {
 
 #[cfg(test)]
 mod tests {
-    use crate::lc2981::Solution;
+    use super::*;
 
     #[test]
     fn test1() {
