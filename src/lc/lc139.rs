@@ -4,21 +4,17 @@ use std::collections::HashSet;
 impl Solution {
     pub fn word_break(s: String, word_dict: Vec<String>) -> bool {
         let word_set = word_dict.into_iter().collect::<HashSet<_>>();
-        let mut dp = vec![vec![false; s.len() + 1]; s.len() + 1];
-        dp[0] = vec![true; s.len() + 1];
-        for len in 1..s.len() + 1 {
-            // ii + len <= s.len()
-            // ii <= s.len() - len
-            for ii in 0..s.len() - len + 1 {
-                // dp[ii, len] -> contains[ii, jj) && dp[jj, len - (jj - ii)]
-                // 0 <= len - (jj - ii) < len
-                // ii < jj && jj <= ii + len
-                for jj in ii + 1..ii + len + 1 {
-                    dp[len][ii] = dp[len][ii] || (word_set.contains(&s[ii..jj]) && dp[len - (jj - ii)][jj]);
-                }
+        let mut dp = vec![false; s.len() + 1];
+        // the length of dp[0] is s.len() + 1
+        dp[s.len()] = true;
+        // very critical!
+        // dp(ii) -> contains[ii, jj) && dp(jj)
+        for ii in (0..s.len() + 1).rev() {
+            for jj in ii + 1..s.len() + 1 {
+                dp[ii] = dp[ii] || (word_set.contains(&s[ii..jj]) && dp[jj]);
             }
         }
-        dp[s.len()][0]
+        dp[0]
     }
 }
 
