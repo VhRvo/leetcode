@@ -6,8 +6,9 @@ impl Solution {
         let word_set = word_dict.into_iter().collect::<HashSet<_>>();
         let mut dp = vec![false; s.len() + 1];
         // the length of dp[0] is s.len() + 1
-        dp[s.len()] = true;
         // very critical!
+        // B/c dp[s.len()] means the empty string after the last character
+        dp[s.len()] = true;
         // dp(ii) -> contains[ii, jj) && dp(jj)
         for ii in (0..s.len() + 1).rev() {
             for jj in ii + 1..s.len() + 1 {
