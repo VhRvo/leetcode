@@ -11,7 +11,10 @@ impl Solution {
         // dp(ii) -> contains[ii, jj) && dp(jj)
         for ii in (0..s.len() + 1).rev() {
             for jj in ii + 1..s.len() + 1 {
-                dp[ii] = dp[ii] || (word_set.contains(&s[ii..jj]) && dp[jj]);
+                if word_set.contains(&s[ii..jj]) && dp[jj] {
+                    dp[ii] = true;
+                    break;
+                }
             }
         }
         dp[0]
