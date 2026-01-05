@@ -67,7 +67,7 @@ impl Solution {
         for id in initial + 1..col {
             union_find.union(initial, id);
         }
-        for id in last - col + 1..last {
+        for id in last - (col - 1)..last {
             union_find.union(id, last);
         }
 
