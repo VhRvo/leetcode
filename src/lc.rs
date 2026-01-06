@@ -11,6 +11,7 @@ mod lc1146;
 mod lc1146_endless;
 mod lc120;
 mod lc121;
+mod lc1161;
 mod lc122;
 mod lc123;
 mod lc128;
