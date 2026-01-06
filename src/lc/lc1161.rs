@@ -36,7 +36,7 @@ impl Solution {
 mod tests {
     use super::*;
     use crate::lc_util::make_tree;
-    use crate::{tree, null_to_none};
+    use crate::{null_to_none, tree};
 
     #[test]
     fn test1() {

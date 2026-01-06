@@ -1,6 +1,6 @@
 struct Solution;
 
-struct UnionFind{
+struct UnionFind {
     parent: Vec<usize>,
     rank: Vec<usize>,
 }
@@ -12,10 +12,7 @@ impl UnionFind {
             *element = ii;
         }
         let rank = vec![1; n];
-        UnionFind{
-            parent,
-            rank,
-        }
+        UnionFind { parent, rank }
     }
 
     pub fn union(&mut self, mut left: usize, mut right: usize) -> usize {

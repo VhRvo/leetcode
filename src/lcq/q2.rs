@@ -38,8 +38,8 @@ mod tests {
     #[test]
     fn test1() {
         assert_eq!(
-            Solution::shuffle(vec![2,5,1,3,4,7], 3),
-            vec![2,3,5,4,1,7]
+            Solution::shuffle(vec![2, 5, 1, 3, 4, 7], 3),
+            vec![2, 3, 5, 4, 1, 7]
         )
     }
 }

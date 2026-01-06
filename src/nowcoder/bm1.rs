@@ -36,13 +36,10 @@ impl Solution {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn test1() {
-    }
+    fn test1() {}
 }
-

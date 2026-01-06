@@ -3,7 +3,7 @@ struct Solution;
 impl Solution {
     pub fn longest_palindrome_subseq(s: String) -> i32 {
         let s = s.chars().collect::<Vec<_>>();
-        let mut dp = vec![vec![0; s.len() + 1];s.len() + 1];
+        let mut dp = vec![vec![0; s.len() + 1]; s.len() + 1];
         for ii in 0..s.len() + 1 {
             dp[0][ii] = 0;
             dp[1][ii] = 1;
@@ -19,9 +19,7 @@ impl Solution {
                 } else {
                     dp[len][ii] = dp[len - 1][ii + 1].max(dp[len - 1][ii])
                 }
-
             }
-
         }
         dp[s.len()][0]
     }
