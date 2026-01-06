@@ -78,6 +78,7 @@ macro_rules! tree {
 // => vec![tree!(1), tree!(- 8), tree!(null), tree!(3)]
 // => vec![Some(1), Some(-8), None, Some(3)]
 #[macro_export]
+#[warn(unused_mut)]
 macro_rules! null_to_none {
     // 处理空列表
     () => {
