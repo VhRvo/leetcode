@@ -11,6 +11,7 @@ mod lc115;
 mod lc1161;
 mod lc120;
 mod lc121;
+mod lc1218;
 mod lc122;
 mod lc123;
 mod lc128;
