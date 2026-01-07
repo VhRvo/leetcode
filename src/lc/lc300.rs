@@ -5,13 +5,11 @@ impl Solution {
         let mut dp = vec![0; nums.len() + 1];
         let mut result = 0;
         for ii in (0..nums.len()).rev() {
-            let mut last_element = i32::MAX;
             let mut last_index = nums.len();
             for jj in (ii + 1..nums.len()).rev() {
                 if nums[ii] < nums[jj] {
-                    if nums[jj] <= last_element && dp[jj] >= dp[last_index] {
+                    if dp[jj] >= dp[last_index] {
                         last_index = jj;
-                        last_element = nums[jj];
                     }
                 }
             }
