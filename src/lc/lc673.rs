@@ -5,7 +5,7 @@ impl Solution {
         let mut dp_longest = vec![0; nums.len() + 1];
         let mut dp_count = vec![1; nums.len() + 1];
         let mut longest_length = 0;
-        let mut result_count = 0;
+
 
         for ii in (0..nums.len()).rev() {
             let mut last_index = nums.len();
@@ -22,11 +22,13 @@ impl Solution {
             }
             dp_longest[ii] = 1 + dp_longest[last_index];
             dp_count[ii] = count;
+            longest_length = longest_length.max(dp_longest[ii]);
+        }
+
+        let mut result_count = 0;
+        for ii in 0..nums.len() {
             if dp_longest[ii] == longest_length {
-                result_count += count;
-            } else if dp_longest[ii] > longest_length {
-                result_count = count;
-                longest_length = dp_longest[ii];
+                result_count += dp_count[ii];
             }
         }
         result_count
