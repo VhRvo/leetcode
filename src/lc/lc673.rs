@@ -6,7 +6,6 @@ impl Solution {
         let mut dp_count = vec![1; nums.len() + 1];
         let mut longest_length = 0;
 
-
         for ii in (0..nums.len()).rev() {
             let mut last_index = nums.len();
             let mut count = dp_count[last_index];

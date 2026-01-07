@@ -29,9 +29,9 @@ impl Solution {
                 if s1[ii] == s2[jj] {
                     dp[current][jj] = dp[next][jj + 1];
                 } else {
-                    dp[current][jj] = (s1[ii] as i32 + dp[next][jj]).min(s2[jj] as i32 + dp[current][jj + 1]);
+                    dp[current][jj] =
+                        (s1[ii] as i32 + dp[next][jj]).min(s2[jj] as i32 + dp[current][jj + 1]);
                 }
-
             }
         }
         dp[0][0]

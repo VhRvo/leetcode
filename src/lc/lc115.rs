@@ -44,6 +44,9 @@ mod tests {
 
     #[test]
     fn test2() {
-        assert_eq!(Solution::num_distinct("babgbag".to_string(), "bag".to_string()), 5)
+        assert_eq!(
+            Solution::num_distinct("babgbag".to_string(), "bag".to_string()),
+            5
+        )
     }
 }
