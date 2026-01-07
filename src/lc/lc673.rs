@@ -1,0 +1,51 @@
+struct Solution;
+
+impl Solution {
+    pub fn find_number_of_lis(nums: Vec<i32>) -> i32 {
+        let mut dp_longest = vec![0; nums.len() + 1];
+        let mut dp_count = vec![1; nums.len() + 1];
+        let mut longest_length = 0;
+        let mut longest_indexes = Vec::new();
+
+        for ii in (0..nums.len()).rev() {
+            let mut last_index = nums.len();
+            let mut count = dp_count[last_index];
+            for jj in (ii + 1..nums.len()).rev() {
+                if nums[ii] < nums[jj] {
+                    if dp_longest[jj] > dp_longest[last_index] {
+                        count = dp_count[jj];
+                        last_index = jj;
+                    } else if dp_longest[jj] == dp_longest[last_index] {
+                        count += dp_count[jj];
+                    }
+                }
+            }
+            dp_longest[ii] = 1 + dp_longest[last_index];
+            dp_count[ii] = count;
+            if dp_longest[ii] == longest_length {
+                longest_indexes.push(ii)
+            } else if dp_longest[ii] > longest_length {
+                longest_indexes = vec![ii];
+                longest_length = dp_longest[ii];
+            }
+        }
+        let mut result = 0;
+        for index in longest_indexes {
+            result += dp_count[index];
+        }
+        result
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test1() {
+        assert_eq!(Solution::find_number_of_lis(vec![1, 3, 5, 4, 7]), 2)
+    }
+    #[test]
+    fn test2() {
+        assert_eq!(Solution::find_number_of_lis(vec![2, 2, 2, 2, 2]), 5)
+    }
+}
