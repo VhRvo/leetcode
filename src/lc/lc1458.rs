@@ -20,18 +20,12 @@ impl Solution {
                 for count in 0..choices {
                     let pre_count = if count == 0 { 0 } else { count - 1 };
                     let both = nums1[ii] * nums2[jj];
-                    if (nums1[ii].is_positive() && nums2[jj].is_positive())
-                        || (nums1[ii].is_negative() && nums2[jj].is_negative())
-                    {
-                        dp[ii][jj][count] = (dp[ii + 1][jj + 1][pre_count].map(|v| v + both))
-                            .max(dp[ii + 1][jj][count])
-                            .max(dp[ii][jj + 1][count]);
-                    } else {
-                        dp[ii][jj][count] = (dp[ii + 1][jj + 1][pre_count].map(|v| v + both))
-                            .max(dp[ii + 1][jj + 1][count])
-                            .max(dp[ii + 1][jj][count])
-                            .max(dp[ii][jj + 1][count]);
-                    }
+                    /*
+                    dp[ii + 1]][jj][count] = something.max(dp[ii + 1][jj + 1][count])
+                     */
+                    dp[ii][jj][count] = (dp[ii + 1][jj + 1][pre_count].map(|v| v + both))
+                        .max(dp[ii + 1][jj][count])
+                        .max(dp[ii][jj + 1][count]);
                 }
             }
         }
