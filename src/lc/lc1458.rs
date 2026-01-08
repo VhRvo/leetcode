@@ -4,14 +4,14 @@ use std::i32;
 impl Solution {
     pub fn max_dot_product(nums1: Vec<i32>, nums2: Vec<i32>) -> i32 {
         let choices = 2;
-        let mut dp = vec![vec![vec![0; choices]; nums2.len() + 1]; nums1.len() + 1];
+        let mut dp = vec![vec![vec![Some(0); choices]; nums2.len() + 1]; nums1.len() + 1];
         for count in 1..choices {
-            dp[nums1.len()][nums2.len()][count] = i32::MIN / 2;
+            dp[nums1.len()][nums2.len()][count] = None;
             for jj in 0..nums2.len() {
-                dp[nums1.len()][jj][count] = i32::MIN / 2;
+                dp[nums1.len()][jj][count] = None;
             }
             for ii in 0..nums1.len() {
-                dp[ii][nums2.len()][count] = i32::MIN / 2;
+                dp[ii][nums2.len()][count] = None;
             }
         }
 
@@ -23,11 +23,11 @@ impl Solution {
                     if (nums1[ii].is_positive() && nums2[jj].is_positive())
                         || (nums1[ii].is_negative() && nums2[jj].is_negative())
                     {
-                        dp[ii][jj][count] = (both + dp[ii + 1][jj + 1][pre_count])
+                        dp[ii][jj][count] = (dp[ii + 1][jj + 1][pre_count].map(|v| v + both))
                             .max(dp[ii + 1][jj][count])
                             .max(dp[ii][jj + 1][count]);
                     } else {
-                        dp[ii][jj][count] = (both + dp[ii + 1][jj + 1][pre_count])
+                        dp[ii][jj][count] = (dp[ii + 1][jj + 1][pre_count].map(|v| v + both))
                             .max(dp[ii + 1][jj + 1][count])
                             .max(dp[ii + 1][jj][count])
                             .max(dp[ii][jj + 1][count]);
@@ -35,7 +35,7 @@ impl Solution {
                 }
             }
         }
-        dp[0][0][choices - 1]
+        dp[0][0][choices - 1].unwrap_or(i32::MIN)
     }
 }
 
