@@ -1,45 +1,45 @@
 struct Solution;
 
+use std::i32;
 impl Solution {
     pub fn max_dot_product(nums1: Vec<i32>, nums2: Vec<i32>) -> i32 {
-        let mut dp = vec![vec![0; nums2.len() + 1]; nums1.len() + 1];
+        let choices = 2;
+        let mut dp = vec![vec![vec![0; choices]; nums2.len() + 1]; nums1.len() + 1];
+        for count in 1..choices {
+            dp[nums1.len()][nums2.len()][count] = i32::MIN / 2;
+            for jj in 0..nums2.len() {
+                dp[nums1.len()][jj][count] = i32::MIN / 2;
+            }
+            for ii in 0..nums1.len() {
+                dp[ii][nums2.len()][count] = i32::MIN / 2;
+            }
+        }
+
         for ii in (0..nums1.len()).rev() {
             for jj in (0..nums2.len()).rev() {
-                if (nums1[ii].is_positive() && nums2[jj].is_positive())
-                    || (nums1[ii].is_negative() && nums2[jj].is_negative())
-                {
-                    dp[ii][jj] = (nums1[ii] * nums2[jj] + dp[ii + 1][jj + 1])
-                        .max(dp[ii + 1][jj])
-                        .max(dp[ii][jj + 1]);
-                } else {
-                    dp[ii][jj] = dp[ii + 1][jj + 1].max(dp[ii + 1][jj]).max(dp[ii][jj + 1]);
+                for count in 0..choices {
+                    let pre_count = if count == 0 { 0 } else { count - 1 };
+                    let both = nums1[ii] * nums2[jj];
+                    if (nums1[ii].is_positive() && nums2[jj].is_positive())
+                        || (nums1[ii].is_negative() && nums2[jj].is_negative())
+                    {
+                        dp[ii][jj][count] = (both + dp[ii + 1][jj + 1][pre_count])
+                            .max(dp[ii + 1][jj][count])
+                            .max(dp[ii][jj + 1][count]);
+                    } else {
+                        dp[ii][jj][count] = (both + dp[ii + 1][jj + 1][pre_count])
+                            .max(dp[ii + 1][jj + 1][count])
+                            .max(dp[ii + 1][jj][count])
+                            .max(dp[ii][jj + 1][count]);
+                    }
                 }
             }
         }
-        let mut has_zero = false;
-        let mut mininal_non_zero_absolutes = Vec::with_capacity(2);
-        for nums in [nums1, nums2] {
-            let mut mininal_non_zero_absolute = i32::MAX;
-            for ii in 0..nums.len() {
-                if nums[ii] == 0 {
-                    has_zero = true;
-                    break;
-                }
-                mininal_non_zero_absolute =
-                    mininal_non_zero_absolute.min(nums[ii].abs());
-            }
-            mininal_non_zero_absolutes.push(mininal_non_zero_absolute);
-        }
-        if has_zero {
-            dp[0][0]
-        } else if dp[0][0] == 0{
-            - mininal_non_zero_absolutes.iter().product::<i32>()
-        } else {
-            dp[0][0]
-        }
+        dp[0][0][choices - 1]
     }
 }
 
+#[cfg(test)]
 mod tests {
     use super::*;
     #[test]
