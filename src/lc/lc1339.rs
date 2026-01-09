@@ -1,11 +1,10 @@
 struct Solution;
 
-
 use crate::lc_util::TreeNode;
 
-use std::rc::Rc;
 use std::cell::RefCell;
 use std::collections::HashSet;
+use std::rc::Rc;
 const MODULO: i64 = 1e9 as i64 + 7;
 impl Solution {
     pub fn max_product(root: Option<Rc<RefCell<TreeNode>>>) -> i32 {

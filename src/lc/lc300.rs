@@ -45,9 +45,7 @@ impl Solution {
     fn dp_from_end_patience_sorting(nums: Vec<i32>) -> i32 {
         let mut dp = Vec::with_capacity(nums.len());
         for ii in (0..nums.len()).rev() {
-            let partition = dp.partition_point(|&element: &i32| {
-                nums[ii] < element
-            });
+            let partition = dp.partition_point(|&element: &i32| nums[ii] < element);
             if partition == dp.len() {
                 dp.push(nums[ii]);
             } else {
@@ -59,9 +57,7 @@ impl Solution {
     fn dp_from_start_patience_sorting(nums: Vec<i32>) -> i32 {
         let mut dp = Vec::with_capacity(nums.len());
         for ii in 0..nums.len() {
-            let partition = dp.partition_point(|&element: &i32| {
-                element < nums[ii]
-            });
+            let partition = dp.partition_point(|&element: &i32| element < nums[ii]);
             if partition == dp.len() {
                 dp.push(nums[ii]);
             } else {
