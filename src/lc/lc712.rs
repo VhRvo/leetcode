@@ -16,7 +16,6 @@ impl Solution {
         }
         let last_column = s2.len();
         let mut last_column_suffix_sum = 0;
-        // for ii in (0..s1.len()).rev() {
         for (ii, &s1_item) in s1.iter().enumerate().rev() {
             let current = ii % 2;
             last_column_suffix_sum += s1_item as i32;
@@ -26,7 +25,40 @@ impl Solution {
                 if s1[ii] == s2[jj] {
                     dp[current][jj] = dp[next][jj + 1];
                 } else {
-                    dp[current][jj] = (s1[ii] as i32 + dp[next][jj]).min(s2[jj] as i32 + dp[current][jj + 1]);
+                    dp[current][jj] =
+                        (s1[ii] as i32 + dp[next][jj]).min(s2[jj] as i32 + dp[current][jj + 1]);
+                }
+            }
+        }
+        dp[0][0]
+    }
+    fn minimum_delete_sum_index(s1: String, s2: String) -> i32 {
+        let s1 = s1.bytes().collect::<Vec<_>>();
+        let s2 = s2.bytes().collect::<Vec<_>>();
+        let mut dp = vec![vec![0; s2.len() + 1]; 2];
+        {
+            let last_row = s1.len() % 2;
+            let mut last_row_sum = 0;
+            for (jj, &element) in s2.iter().enumerate().rev() {
+                last_row_sum += element as i32;
+                dp[last_row][jj] = last_row_sum;
+            }
+        }
+
+        let last_column = s2.len();
+        let mut last_column_sum = 0;
+        for ii in (0..s1.len()).rev() {
+            let current = ii % 2;
+            let next = (ii + 1) % 2;
+
+            last_column_sum += s1[ii] as i32;
+            dp[current][last_column] = last_column_sum;
+            for jj in (0..s2.len()).rev() {
+                if s1[ii] == s2[jj] {
+                    dp[current][jj] = dp[next][jj + 1];
+                } else {
+                    dp[current][jj] =
+                        (s1[ii] as i32 + dp[next][jj]).min(s2[jj] as i32 + dp[current][jj + 1]);
                 }
             }
         }
