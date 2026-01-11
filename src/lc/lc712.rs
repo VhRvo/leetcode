@@ -9,17 +9,17 @@ impl Solution {
             let last_row = s1.len() % 2;
             let mut last_row_suffix_sum = 0;
 
-            for (&element, sum) in s2.iter().zip(dp[last_row].iter_mut()).rev() {
-                last_row_suffix_sum += element as i32;
+            for (&item, sum) in s2.iter().zip(dp[last_row].iter_mut()).rev() {
+                last_row_suffix_sum += item as i32;
                 *sum = last_row_suffix_sum;
             }
         }
         let last_column = s2.len();
         let mut last_column_suffix_sum = 0;
         // for ii in (0..s1.len()).rev() {
-        for (ii, &element) in s1.iter().enumerate().rev() {
+        for (ii, &s1_item) in s1.iter().enumerate().rev() {
             let current = ii % 2;
-            last_column_suffix_sum += element as i32;
+            last_column_suffix_sum += s1_item as i32;
             dp[current][last_column] = last_column_suffix_sum;
             let next = (ii + 1) % 2;
             for jj in (0..s2.len()).rev() {
