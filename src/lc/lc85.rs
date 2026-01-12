@@ -18,7 +18,6 @@ impl Solution {
                 return;
             } else {
                 stack.push(top);
-                // stack.push((row, column));
                 break;
             }
         }
