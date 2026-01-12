@@ -2,7 +2,46 @@ struct Solution;
 
 impl Solution {
     pub fn maximal_rectangle(matrix: Vec<Vec<char>>) -> i32 {
-        Self::dp_monotone_stack(matrix)
+        Self::dp_monotone_stack_along_row(matrix)
+    }
+    fn dp_monotone_stack_along_row(matrix: Vec<Vec<char>>) -> i32 {
+        use std::mem;
+        let rows = matrix.len();
+        let columns = matrix[0].len();
+        let mut dp_starting_at = vec![vec![(0, 0); columns + 1]; 2];
+        let mut result = 0;
+        let mut rolling_stack = vec![Vec::new(); 2];
+        for ii in (0..rows).rev() {
+            let current = ii % 2;
+            let next = (ii + 1) % 2;
+            for jj in (0..columns).rev() {
+                if matrix[ii][jj] == '1' {
+                    let mut stack = mem::take(&mut rolling_stack[jj % 2]);
+                    stack.clear();
+                    let next_stack = &rolling_stack[(jj + 1) % 2];
+                    let down_span = dp_starting_at[next][jj].0 + 1;
+                    let right_span = dp_starting_at[current][jj + 1].1 + 1;
+                    Self::insert_to_monotone_stack(&mut stack, &mut result, 1, right_span);
+                    for (row_span, column_span) in next_stack.iter() {
+                        let row_span = (*row_span).min(down_span);
+                        let column_span = (column_span + 1).min(right_span);
+                        Self::insert_to_monotone_stack(
+                            &mut stack,
+                            &mut result,
+                            row_span,
+                            column_span,
+                        );
+                    }
+                    Self::insert_to_monotone_stack(&mut stack, &mut result, down_span, 1);
+                    dp_starting_at[current][jj] = (down_span, right_span);
+                    rolling_stack[jj % 2] = stack;
+                } else {
+                    dp_starting_at[current][jj] = (0, 0);
+                    rolling_stack[jj % 2].clear();
+                }
+            }
+        }
+        result
     }
     fn insert_to_monotone_stack(
         stack: &mut Vec<(i32, i32)>,
@@ -29,7 +68,8 @@ impl Solution {
         *result = (*result).max(row_span * column_span);
         stack.push((row_span, column_span));
     }
-    fn dp_monotone_stack(matrix: Vec<Vec<char>>) -> i32 {
+
+    fn dp_monotone_stack_along_diagonal(matrix: Vec<Vec<char>>) -> i32 {
         use std::mem;
         let rows = matrix.len();
         let columns = matrix[0].len();
@@ -40,19 +80,20 @@ impl Solution {
             let next = (ii + 1) % 2;
             for jj in (0..columns).rev() {
                 if matrix[ii][jj] == '1' {
-                    let span_from_down = dp_starting_at[next][jj].0 .0 + 1;
-                    let span_from_right = dp_starting_at[current][jj + 1].0 .1 + 1;
+                    let down_span = dp_starting_at[next][jj].0 .0 + 1;
+                    let right_span = dp_starting_at[current][jj + 1].0 .1 + 1;
                     let mut stack = mem::take(&mut dp_starting_at[current][jj].1);
                     // Clear the stack when using rolling array since dp[current][jj]
                     // may contain stale data from the previous row iteration
                     stack.clear();
-                    stack.push((1, span_from_right));
-                    result = result.max(span_from_right);
+                    // stack.push((1, right_span));
+                    // result = result.max(right_span);
+                    Self::insert_to_monotone_stack(&mut stack, &mut result, 1, right_span);
                     // Process elements from diagonal cell; cannot chain (down, 1) here
                     // since the loop handles both row and column expansion
                     for (row_span, column_span) in dp_starting_at[next][jj + 1].1.iter() {
-                        let row_span = (row_span + 1).min(span_from_down);
-                        let column_span: i32 = (column_span + 1).min(span_from_right);
+                        let row_span = (row_span + 1).min(down_span);
+                        let column_span: i32 = (column_span + 1).min(right_span);
                         Self::insert_to_monotone_stack(
                             &mut stack,
                             &mut result,
@@ -60,8 +101,8 @@ impl Solution {
                             column_span,
                         );
                     }
-                    Self::insert_to_monotone_stack(&mut stack, &mut result, span_from_down, 1);
-                    dp_starting_at[current][jj] = ((span_from_down, span_from_right), stack);
+                    Self::insert_to_monotone_stack(&mut stack, &mut result, down_span, 1);
+                    dp_starting_at[current][jj] = ((down_span, right_span), stack);
                 } else {
                     dp_starting_at[current][jj].0 = (0, 0);
                     dp_starting_at[current][jj].1.clear();
@@ -84,16 +125,16 @@ impl Solution {
             for jj in (0..columns).rev() {
                 let mut map = BTreeMap::new();
                 if matrix[ii][jj] == '1' {
-                    let down = dp[next][jj].0 + 1;
-                    let right = dp[current][jj + 1].1 + 1;
+                    let down_span: i32 = dp[next][jj].0 + 1;
+                    let right_span = dp[current][jj + 1].1 + 1;
                     for (row, column) in dp[next][jj + 1].2.iter() {
                         let row = *row + 1;
                         let column = *column + 1;
-                        map.entry(row.min(down))
+                        map.entry(row.min(down_span))
                             .and_modify(|value: &mut i32| *value = (*value).max(column))
                             .or_insert(column);
                     }
-                    for (row, column) in [(down, 1), (1, right)] {
+                    for (row, column) in [(down_span, 1), (1, right_span)] {
                         map.entry(row)
                             .and_modify(|value: &mut i32| {
                                 *value = (*value).max(column);
@@ -101,10 +142,10 @@ impl Solution {
                             .or_insert(column);
                     }
                     for (row, column) in map.iter_mut() {
-                        *column = (*column).min(right);
+                        *column = (*column).min(right_span);
                         result = result.max(*row * *column);
                     }
-                    dp[current][jj] = (down, right, map);
+                    dp[current][jj] = (down_span, right_span, map);
                 } else {
                     dp[current][jj] = (0, 0, BTreeMap::new());
                 }
