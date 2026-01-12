@@ -10,17 +10,22 @@ impl Solution {
         row_span: i32,
         column_span: i32,
     ) {
-        while let Some(top) = stack.pop() {
-            if top.0 < row_span && top.1 < column_span {
-                continue;
-            } else if top.0 >= row_span && top.1 >= column_span {
-                stack.push(top);
-                return;
-            } else {
-                stack.push(top);
-                break;
-            }
+        // Pop elements that are strictly dominated by the new element
+        while stack
+            .last()
+            .map_or(false, |top| row_span > top.0 && column_span > top.1)
+        {
+            stack.pop();
         }
+
+        // Skip insertion if the top element dominates or equals the new element
+        if stack
+            .last()
+            .map_or(false, |top| top.0 >= row_span && top.1 >= column_span)
+        {
+            return;
+        }
+
         *result = (*result).max(row_span * column_span);
         stack.push((row_span, column_span));
     }
@@ -38,13 +43,13 @@ impl Solution {
                     let span_from_down = dp_starting_at[next][jj].0 .0 + 1;
                     let span_from_right = dp_starting_at[current][jj + 1].0 .1 + 1;
                     let mut stack = mem::take(&mut dp_starting_at[current][jj].1);
-                    // If we use rolling array, we have to clear the stack here
-                    // because dp[current][jj].2 may contain data from previous row
+                    // Clear the stack when using rolling array since dp[current][jj]
+                    // may contain stale data from the previous row iteration
                     stack.clear();
                     stack.push((1, span_from_right));
                     result = result.max(span_from_right);
-                    // should not use chain to combine (down, 1) in the loop below
-                    // because the loop process row and column
+                    // Process elements from diagonal cell; cannot chain (down, 1) here
+                    // since the loop handles both row and column expansion
                     for (row_span, column_span) in dp_starting_at[next][jj + 1].1.iter() {
                         let row_span = (row_span + 1).min(span_from_down);
                         let column_span: i32 = (column_span + 1).min(span_from_right);
