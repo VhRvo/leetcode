@@ -109,6 +109,7 @@ mod lc740;
 mod lc746;
 mod lc756;
 mod lc807;
+mod lc85;
 mod lc852;
 mod lc865;
 mod lc867;
