@@ -7,13 +7,13 @@ impl Solution {
     fn insert_to_monotone_stack(
         stack: &mut Vec<(i32, i32)>,
         result: &mut i32,
-        row: i32,
-        column: i32,
+        row_span: i32,
+        column_span: i32,
     ) {
         while let Some(top) = stack.pop() {
-            if top.0 < row && top.1 < column {
+            if top.0 < row_span && top.1 < column_span {
                 continue;
-            } else if top.0 >= row && top.1 >= column {
+            } else if top.0 >= row_span && top.1 >= column_span {
                 stack.push(top);
                 return;
             } else {
@@ -21,40 +21,45 @@ impl Solution {
                 break;
             }
         }
-        *result = (*result).max(row * column);
-        stack.push((row, column));
+        *result = (*result).max(row_span * column_span);
+        stack.push((row_span, column_span));
     }
     fn dp_monotone_stack(matrix: Vec<Vec<char>>) -> i32 {
         use std::mem;
         let rows = matrix.len();
         let columns = matrix[0].len();
-        let mut dp = vec![vec![((0, 0), Vec::new()); columns + 1]; 2];
+        let mut dp_starting_at = vec![vec![((0, 0), Vec::new()); columns + 1]; 2];
         let mut result = 0;
         for ii in (0..rows).rev() {
             let current = ii % 2;
             let next = (ii + 1) % 2;
             for jj in (0..columns).rev() {
                 if matrix[ii][jj] == '1' {
-                    let down = dp[next][jj].0 .0 + 1;
-                    let right = dp[current][jj + 1].0 .1 + 1;
-                    let mut stack = mem::take(&mut dp[current][jj].1);
+                    let span_from_down = dp_starting_at[next][jj].0 .0 + 1;
+                    let span_from_right = dp_starting_at[current][jj + 1].0 .1 + 1;
+                    let mut stack = mem::take(&mut dp_starting_at[current][jj].1);
                     // If we use rolling array, we have to clear the stack here
                     // because dp[current][jj].2 may contain data from previous row
                     stack.clear();
-                    stack.push((1, right));
-                    result = result.max(right);
+                    stack.push((1, span_from_right));
+                    result = result.max(span_from_right);
                     // should not use chain to combine (down, 1) in the loop below
                     // because the loop process row and column
-                    for (row, column) in dp[next][jj + 1].1.iter() {
-                        let row = (row + 1).min(down);
-                        let column: i32 = (column + 1).min(right);
-                        Self::insert_to_monotone_stack(&mut stack, &mut result, row, column);
+                    for (row_span, column_span) in dp_starting_at[next][jj + 1].1.iter() {
+                        let row_span = (row_span + 1).min(span_from_down);
+                        let column_span: i32 = (column_span + 1).min(span_from_right);
+                        Self::insert_to_monotone_stack(
+                            &mut stack,
+                            &mut result,
+                            row_span,
+                            column_span,
+                        );
                     }
-                    Self::insert_to_monotone_stack(&mut stack, &mut result, down, 1);
-                    dp[current][jj] = ((down, right), stack);
+                    Self::insert_to_monotone_stack(&mut stack, &mut result, span_from_down, 1);
+                    dp_starting_at[current][jj] = ((span_from_down, span_from_right), stack);
                 } else {
-                    dp[current][jj].0 = (0, 0);
-                    dp[current][jj].1.clear();
+                    dp_starting_at[current][jj].0 = (0, 0);
+                    dp_starting_at[current][jj].1.clear();
                 }
             }
         }
