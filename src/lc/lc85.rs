@@ -4,6 +4,7 @@ impl Solution {
     pub fn maximal_rectangle(matrix: Vec<Vec<char>>) -> i32 {
         Self::dp_monotone_stack_along_row(matrix)
     }
+
     fn dp_monotone_stack_along_row(matrix: Vec<Vec<char>>) -> i32 {
         use std::mem;
         let rows = matrix.len();
@@ -43,6 +44,7 @@ impl Solution {
         }
         result
     }
+
     fn insert_to_monotone_stack(
         stack: &mut Vec<(i32, i32)>,
         result: &mut i32,
@@ -111,6 +113,7 @@ impl Solution {
         }
         result
     }
+
     fn dp_btree_map(matrix: Vec<Vec<char>>) -> i32 {
         use std::collections::BTreeMap;
         let rows = matrix.len();
