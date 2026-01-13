@@ -21,12 +21,11 @@ impl Solution {
         (below, above)
     }
     pub fn separate_squares(squares: Vec<Vec<i32>>) -> f64 {
-        Self::partition_point_is_last_predicate(squares)
-        // Self::partition_point_is_first_not_predicate(squares)
+        Self::partition_point_is_first_not_predicate(squares)
     }
-    fn partition_point_is_last_predicate(squares: Vec<Vec<i32>>) -> f64 {
-        // This question asks for the minimum y-coordinate of the separating line
-        // This function returns the maximum y-coordinate of the separating line
+    // This question asks for the minimum y-coordinate of the separating line
+    // This function returns the maximum y-coordinate of the separating line
+    fn inappropriate_partition_point_is_last_predicate(squares: Vec<Vec<i32>>) -> f64 {
         fn calculate_line_area(line: i32, squares: &[Vec<i32>]) -> i64 {
             let mut area = 0;
             for sqaure in squares.iter() {
@@ -112,6 +111,15 @@ impl Solution {
             let mut lo = lo;
             let mut hi = hi + 1;
             // Find the first position where predicate is false
+            /*
+              !(hi - lo < 1)
+            =>
+              hi - lo >= 1
+            =>
+              lo + 1 <= hi
+            =>
+              lo < hi
+             */
             while lo < hi {
                 let mi = lo.midpoint(hi);
                 if predicate(mi) {
