@@ -1,12 +1,13 @@
 struct Solution;
 
 impl Solution {
-    fn calculate_area(line: i32, squares: &[Vec<i32>]) -> (i32, i32) {
+    fn calculate_area(line: i32, squares: &[Vec<i32>]) -> (i64, i64) {
+        let line = line as i64;
         let mut below = 0;
         let mut above = 0;
         for sqaure in squares.iter() {
-            let y = sqaure[1];
-            let length = sqaure[2];
+            let y = sqaure[1] as i64;
+            let length = sqaure[2] as i64;
             let area = length * length;
             if y >= line {
                 above += area;
@@ -19,14 +20,13 @@ impl Solution {
         }
         (below, above)
     }
-    fn calculate_line_area(line: i32, squares: &[Vec<i32>]) -> i32 {
+    fn calculate_line_area(line: i32, squares: &[Vec<i32>]) -> i64 {
         let mut area = 0;
         for sqaure in squares.iter() {
             let y = sqaure[1];
             let length = sqaure[2];
-            // y <= line - 1 && y + length >= line
             if y < line && y + length >= line {
-                area += length;
+                area += length as i64;
             }
         }
         area
@@ -41,11 +41,26 @@ impl Solution {
             }
             (lowerest, upperest)
         };
-        let mi = (lo..hi + 1).collect::<Vec<_>>().partition_point(|&line| {
+        let predicate = |line: i32| {
             let (below, above) = Self::calculate_area(line, &squares);
             below < above
-        }) as i32
-            + lo;
+        };
+        let mi = {
+            // predicate(lo)
+            let mut lo = lo;
+            // !predicate(hi)
+            let mut hi = hi + 1;
+            // find the first position where predicate is false
+            while lo < hi {
+                let mi = lo.midpoint(hi);
+                if predicate(mi) {
+                    lo = mi + 1;
+                } else {
+                    hi = mi;
+                }
+            }
+            lo
+        };
         let (below, above) = Self::calculate_area(mi, &squares);
         let area = Self::calculate_line_area(mi, &squares);
         if below == above {
@@ -81,5 +96,23 @@ mod tests {
         let result = Solution::separate_squares(vec![vec![23, 29, 3], vec![28, 29, 4]]);
         println!("{}", result);
         assert!((result - 30.78571).abs() < 1e-5,);
+    }
+
+    #[test]
+    fn test4() {
+        let result = Solution::separate_squares(vec![
+            vec![522261215, 954313664, 225462],
+            vec![628661372, 718610752, 10667],
+            vec![619734768, 941310679, 44788],
+            vec![352367502, 656774918, 289036],
+            vec![860247066, 905800565, 100123],
+            vec![817623994, 962847576, 71460],
+            vec![691552058, 782740602, 36271],
+            vec![911356, 152015365, 513881],
+            vec![462847044, 859151855, 233567],
+            vec![672324240, 954509294, 685569],
+        ]);
+        println!("{}", result);
+        assert!((result - 954521423.80202).abs() < 1e-5,);
     }
 }
