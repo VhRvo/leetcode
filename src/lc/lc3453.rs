@@ -20,18 +20,25 @@ impl Solution {
         }
         (below, above)
     }
-    fn calculate_line_area(line: i32, squares: &[Vec<i32>]) -> i64 {
-        let mut area = 0;
-        for sqaure in squares.iter() {
-            let y = sqaure[1];
-            let length = sqaure[2];
-            if y < line && y + length >= line {
-                area += length as i64;
-            }
-        }
-        area
-    }
     pub fn separate_squares(squares: Vec<Vec<i32>>) -> f64 {
+        Self::partition_point_is_last_predicate(squares)
+        // Self::partition_point_is_first_not_predicate(squares)
+    }
+    fn partition_point_is_last_predicate(squares: Vec<Vec<i32>>) -> f64 {
+        // This question asks for the minimum y-coordinate of the separating line
+        // This function returns the maximum y-coordinate of the separating line
+        fn calculate_line_area(line: i32, squares: &[Vec<i32>]) -> i64 {
+            let mut area = 0;
+            for sqaure in squares.iter() {
+                let y = sqaure[1];
+                let length = sqaure[2];
+                // y + length >= line + 1 => y + length > line
+                if y <= line && y + length > line {
+                    area += length as i64;
+                }
+            }
+            area
+        }
         let (lo, hi) = {
             let mut lowerest = i32::MAX;
             let mut upperest = i32::MIN;
@@ -41,16 +48,70 @@ impl Solution {
             }
             (lowerest, upperest)
         };
+        // Predicate: returns true if the area below the line is less than or equal to the area above
+        // We use this to find the last position where below <= above (i.e., the transition point)
+        let predicate = |line: i32| {
+            let (below, above) = Self::calculate_area(line, &squares);
+            below <= above
+        };
+        let mi = {
+            // Binary search to find the transition point
+            // In the beginning: predicate(lo) is true, predicate(hi) is false
+            let mut lo = lo;
+            let mut hi = hi + 1;
+            // Find the first position where predicate is false
+            while lo < hi {
+                let mi = lo.midpoint(hi);
+                if predicate(mi) {
+                    lo = mi + 1;
+                } else {
+                    hi = mi;
+                }
+            }
+            lo - 1
+        };
+        let (below, above) = Self::calculate_area(mi, &squares);
+        let area = calculate_line_area(mi, &squares);
+        if below == above {
+            mi as f64
+        } else {
+            mi as f64 + ((above - below) as f64 / (2 * area) as f64)
+        }
+    }
+    fn partition_point_is_first_not_predicate(squares: Vec<Vec<i32>>) -> f64 {
+        fn calculate_line_area(line: i32, squares: &[Vec<i32>]) -> i64 {
+            let mut area = 0;
+            for sqaure in squares.iter() {
+                let y = sqaure[1];
+                let length = sqaure[2];
+                // y <= line - 1 => y < line
+                if y < line && y + length >= line {
+                    area += length as i64;
+                }
+            }
+            area
+        }
+        let (lo, hi) = {
+            let mut lowerest = i32::MAX;
+            let mut upperest = i32::MIN;
+            for square in squares.iter() {
+                lowerest = lowerest.min(square[1]);
+                upperest = upperest.max(square[1] + square[2]);
+            }
+            (lowerest, upperest)
+        };
+        // Predicate: returns true if the area below the line is strictly less than the area above
+        // We use this to find the first position where below >= above
         let predicate = |line: i32| {
             let (below, above) = Self::calculate_area(line, &squares);
             below < above
         };
         let mi = {
-            // predicate(lo)
+            // Binary search to find the first position where predicate is false
+            // In the beginning: predicate(lo) is true, predicate(hi) is false
             let mut lo = lo;
-            // !predicate(hi)
             let mut hi = hi + 1;
-            // find the first position where predicate is false
+            // Find the first position where predicate is false
             while lo < hi {
                 let mi = lo.midpoint(hi);
                 if predicate(mi) {
@@ -62,7 +123,7 @@ impl Solution {
             lo
         };
         let (below, above) = Self::calculate_area(mi, &squares);
-        let area = Self::calculate_line_area(mi, &squares);
+        let area = calculate_line_area(mi, &squares);
         if below == above {
             mi as f64
         } else {
