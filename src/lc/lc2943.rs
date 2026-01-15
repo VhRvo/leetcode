@@ -1,22 +1,21 @@
 struct Solution;
 
 impl Solution {
-    fn max_consective_segment(bars: &[i32]) -> i32 {
-        let mut current = i32::MIN;
-        let mut result = 0;
-        let mut length = 0;
-        for bar in bars.iter() {
-            if current + 1 == *bar {
-                current = *bar;
-                length += 1;
+    fn max_consecutive_segment(bars: &[i32]) -> i32 {
+        let mut prev = i32::MIN;
+        let mut max_len = 0;
+        let mut cur_len = 0;
+        // Append a sentinel value to force final segment update
+        for &bar in bars.iter().chain(std::iter::once(&i32::MAX)) {
+            if prev + 1 == bar {
+                cur_len += 1;
             } else {
-                result = result.max(length + 1);
-                current = *bar;
-                length = 1;
+                max_len = max_len.max(cur_len);
+                cur_len = 1;
             }
+            prev = bar;
         }
-        result = result.max(length + 1);
-        result
+        max_len + 1
     }
     pub fn maximize_square_hole_area(
         _: i32,
@@ -26,8 +25,8 @@ impl Solution {
     ) -> i32 {
         h_bars.sort();
         v_bars.sort();
-        let h_max = Self::max_consective_segment(&h_bars);
-        let v_max = Self::max_consective_segment(&v_bars);
+        let h_max = Self::max_consecutive_segment(&h_bars);
+        let v_max = Self::max_consecutive_segment(&v_bars);
         let minimal = h_max.min(v_max);
         minimal * minimal
     }
