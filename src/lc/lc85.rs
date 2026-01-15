@@ -2,10 +2,57 @@ struct Solution;
 
 impl Solution {
     pub fn maximal_rectangle(matrix: Vec<Vec<char>>) -> i32 {
-        Self::dp_monotone_stack_along_row(matrix)
+        Self::coordinate_monotone_stack_along_row(matrix)
     }
 
-    fn dp_monotone_stack_along_row(matrix: Vec<Vec<char>>) -> i32 {
+    fn coordinate_monotone_stack_along_row(matrix: Vec<Vec<char>>) -> i32 {
+        fn insert_to_monotone_stack(
+            stack: &mut Vec<(usize, usize)>,
+            result: &mut usize,
+            current_column: usize,
+            height: usize,
+        ) {
+            let mut leftmost = current_column;
+            while stack
+                .last()
+                .map_or(false, |(_, left_height)| *left_height >= height)
+            {
+                if let Some((column, popped_height)) = stack.pop() {
+                    *result = (*result).max((current_column - column) * popped_height);
+                    leftmost = column;
+                }
+            }
+
+            stack.push((leftmost, height));
+        }
+        let rows = matrix.len();
+        let columns = matrix[0].len();
+        let mut heights = vec![0; columns];
+        let mut result = 0;
+        // Monotone stack storing Pareto-optimal points (non-dominated points in partial order, sorted by y-coordinate)
+        // Each element is (column index, height)
+        let mut stack = Vec::new();
+        // The scanning direction (top-to-bottom or bottom-to-top) does not affect correctness
+        for ii in (0..rows).rev() {
+            stack.clear();
+            // Must scan left-to-right: width is computed as (current - column)
+            for jj in 0..columns {
+                if matrix[ii][jj] == '1' {
+                    heights[jj] = heights[jj] + 1;
+                } else {
+                    heights[jj] = 0;
+                }
+                insert_to_monotone_stack(&mut stack, &mut result, jj, heights[jj]);
+            }
+            // Clear the stack at the end of the row
+            while let Some((column, height)) = stack.pop() {
+                result = result.max((columns - column) * height);
+            }
+        }
+        result as i32
+    }
+
+    fn dp_span_monotone_stack_along_row(matrix: Vec<Vec<char>>) -> i32 {
         use std::mem;
         let rows = matrix.len();
         let columns = matrix[0].len();
