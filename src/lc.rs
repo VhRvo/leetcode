@@ -86,6 +86,7 @@ mod lc326;
 mod lc344;
 mod lc3453;
 mod lc350;
+mod lc354;
 mod lc36;
 mod lc377;
 mod lc387;
