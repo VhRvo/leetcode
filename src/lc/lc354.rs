@@ -91,6 +91,7 @@ impl Solution {
 
             let point = monotone_stack.partition_point(|pareto_points: &Vec<(i32, i32)>| {
                 for &(w, h) in pareto_points.iter() {
+                    // We need to find the point before the same width group
                     // if w < width && h < height {
                     if w != width && h < height {
                         return true;

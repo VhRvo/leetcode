@@ -79,6 +79,7 @@ mod lc2981;
 mod lc2982;
 mod lc300;
 mod lc3033;
+mod lc3047;
 mod lc309;
 mod lc3101;
 mod lc312;
