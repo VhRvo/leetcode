@@ -39,6 +39,7 @@ mod lc1768;
 mod lc18;
 mod lc188;
 mod lc189;
+mod lc1964;
 mod lc1970;
 mod lc1975;
 mod lc198;
