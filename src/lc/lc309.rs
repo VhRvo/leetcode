@@ -23,14 +23,17 @@ impl Solution {
         // dp_starting_at[index][colddown][hold]
         // let mut dp_starting_at = vec![vec![vec![0; 2]; 2]; 2];
         let mut dp_starting_at = [[[0; 2]; 2]; 2];
-        for ii in (0..prices.len()).rev() {
+        for (ii, price) in prices.iter().enumerate().rev() {
+            // Use current and next only for indexing the 2-row rolling array
             let current = ii % 2;
             let next = (ii + 1) % 2;
+            // let dp_starting_at[current] = &mut dp_starting_at[ii % 2];
+            // let dp_at_next = &mut dp_starting_at[(ii + 1) % 2];
             // Important: index prices with `ii`; using `current` (mod 2) desyncs rows and is buggy
             dp_starting_at[current][0][0] =
-                dp_starting_at[next][0][0].max(dp_starting_at[next][0][1] - prices[ii]);
+                dp_starting_at[next][0][0].max(dp_starting_at[next][0][1] - price);
             dp_starting_at[current][0][1] =
-                dp_starting_at[next][0][1].max(dp_starting_at[next][1][0] + prices[ii]);
+                dp_starting_at[next][0][1].max(dp_starting_at[next][1][0] + price);
             dp_starting_at[current][1][0] = dp_starting_at[next][0][0];
         }
         dp_starting_at[0][0][0]
