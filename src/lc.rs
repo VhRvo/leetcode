@@ -1,5 +1,6 @@
 mod demo;
 mod lc1;
+mod lc10;
 mod lc1017;
 mod lc1027;
 mod lc1035;
