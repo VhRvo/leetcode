@@ -315,11 +315,88 @@ mod improved2 {
     }
 }
 
+mod optimal {
+    // # 从 improved2 到 optimal 的推理过程
+    //
+    // improved2 的瓶颈在于：
+    // 对每个 start，都要把 heights[start] 排序一次，因此复杂度是 O(mn log n)。
+    //
+    // 这里继续沿用 improved2 的视角：
+    //   column_heights[col] = 从当前 start 行出发，列 col 向下连续 1 的最大长度
+    //
+    // 当 start 从下往上移动一行时，每一列的高度只会发生两种变化：
+    //   1. 如果 matrix[start][col] == 0，高度直接变成 0
+    //   2. 如果 matrix[start][col] == 1，高度就在原来的基础上 +1
+    //
+    // 关键在于，这种更新不会任意打乱列高的相对顺序：
+    // 所有变成 0 的列统一放到前面；所有仍为正数的列统一放到后面，
+    // 而后者彼此之间只是整体 +1，原有大小关系不会改变。
+    //
+    // 因此，如果上一轮列下标已经按高度升序排好，
+    // 那这一轮无需重新排序，只要做一次稳定划分：
+    //   - 当前行为 0 的列放前面
+    //   - 当前行为 1 的列放后面
+    // 就能继续保持“按当前高度升序排列”的不变量。
+    //
+    // 有了这个有序顺序后，从大到小扫描这些列：
+    //   - width 表示当前已经选了多少列
+    //   - column_heights[col] 表示这 width 列里的最小高度
+    //   - 因而面积候选就是 width * column_heights[col]
+    //
+    // 这样就把 improved2 中每一行的 O(n log n) 排序，优化成了 O(n) 的稳定重排，
+    // 总复杂度降为 O(mn)。
+    pub fn largest_submatrix(matrix: Vec<Vec<i32>>) -> i32 {
+        let m = matrix.len();
+        let n = matrix[0].len();
+        let mut column_heights = vec![0; n];
+        // 列下标始终按当前 column_heights 升序排列。
+        let mut sorted_column_indexes = (0..n).collect::<Vec<usize>>();
+        // 复用临时缓冲区，避免每一轮重复分配。
+        let mut zero_columns = Vec::with_capacity(n);
+        let mut positive_columns = Vec::with_capacity(n);
+        let mut result = 0;
+
+        for row in (0..m).rev() {
+            // drain(..) 会把上一轮的有序结果整体移出并清空 Vec：
+            //   - len 会变成 0
+            //   - capacity 通常保持不变，因此下一轮仍可复用这块缓冲区
+            // 这样既能拿到元素所有权，又能保留 sorted_column_indexes 的底层分配以便回填。
+            // 按上一轮的升序顺序扫描，然后稳定地拆成 0 和正高度两段。
+            for column in sorted_column_indexes.drain(..) {
+                if matrix[row][column] == 0 {
+                    column_heights[column] = 0;
+                    zero_columns.push(column);
+                } else {
+                    column_heights[column] += 1;
+                    positive_columns.push(column);
+                }
+            }
+
+            let mut width = 0;
+            for &column in positive_columns.iter().rev() {
+                width += 1;
+                // 当前扫过的 width 列中，column_heights[column] 是最小高度。
+                result = result.max(width * column_heights[column]);
+            }
+
+            // append 会把两个缓冲区中的元素整体搬回 sorted_column_indexes：
+            //   - zero_columns / positive_columns 的 len 会变成 0
+            //   - 它们的 capacity 通常保持不变，因此下一轮可以继续复用
+            //   - sorted_column_indexes 如果容量不够，可能在这里扩容；够的话就直接复用原缓冲区
+            sorted_column_indexes.append(&mut zero_columns);
+            sorted_column_indexes.append(&mut positive_columns);
+        }
+
+        result as i32
+    }
+}
+
 impl Solution {
     pub fn largest_submatrix(matrix: Vec<Vec<i32>>) -> i32 {
         // inefficient::largest_submatrix(matrix)
         // improved1::largest_submatrix(matrix)
-        improved2::largest_submatrix(matrix)
+        // improved2::largest_submatrix(matrix)
+        optimal::largest_submatrix(matrix)
     }
 }
 
