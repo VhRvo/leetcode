@@ -39,6 +39,7 @@ mod lc1534;
 mod lc16;
 mod lc167;
 mod lc1738;
+mod lc1727;
 mod lc1768;
 mod lc18;
 mod lc188;
