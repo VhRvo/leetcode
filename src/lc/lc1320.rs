@@ -17,6 +17,7 @@ mod plain {
         let length = word.len();
         const WIDTH: usize = 26;
         let mut dp = vec![vec![vec![i32::MAX / 2; WIDTH + 1]; WIDTH + 1]; length + 1];
+        // dp[ii][ch1][ch2] 代表从 ii 位置开始选择 (尚未选择), 主手指在 ch1 字符上, 副手指在 ch2 字符上, 最小的距离和
         for ii in 0..WIDTH + 1 {
             for jj in 0..WIDTH + 1 {
                 dp[length][ii][jj] = 0;
@@ -86,8 +87,8 @@ mod symmetry {
         };
         let length = word.len();
         const WIDTH: usize = 26;
-        // symmetry 版本的 dp[ii][ch] 代表主手指在 ii 位置, 副手指在 ch 字符上,
-        // 和 non-symmetry 版本的区别是, ii 位置已经被主手指按下了
+        // symmetry 版本的 dp[ii][ch] 代表主手指在 ii 位置 (ii 位置已经被选择了), 副手指在 ch 字符上,
+        // 和 non-symmetry 版本的区别是, ii 位置是否已经被选择了
         let mut dp = vec![vec![i32::MAX / 2; WIDTH + 1]; length];
         for ch in 0..WIDTH + 1 {
             dp[length - 1][ch] = 0;
