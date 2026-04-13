@@ -12,14 +12,14 @@ fn inefficient_rob(root: Tree, available: bool) -> i32 {
         Some(root) => {
             let left = root.borrow().left.clone();
             let right = root.borrow().right.clone();
-            let not_choose_root =
+            let skipped =
                 inefficient_rob(left.clone(), true) + inefficient_rob(right.clone(), true);
-            let choose_root =
+            let robbed =
                 root.borrow().val + inefficient_rob(left, false) + inefficient_rob(right, false);
             if available {
-                not_choose_root.max(choose_root)
+                skipped.max(robbed)
             } else {
-                not_choose_root
+                skipped
             }
         }
     }
@@ -31,11 +31,11 @@ fn rob(root: Tree) -> (i32, i32) {
         Some(root) => {
             let left = root.borrow().left.clone();
             let right = root.borrow().right.clone();
-            let left_result = rob(left);
-            let right_result = rob(right);
-            let not_choose_root = left_result.0 + right_result.0;
-            let choose_root = root.borrow().val + left_result.1 + right_result.1;
-            (not_choose_root.max(choose_root), not_choose_root)
+            let (l_robbed, l_skipped) = rob(left);
+            let (r_robbed, r_skipped) = rob(right);
+            let skipped = l_robbed + r_robbed;
+            let robbed = root.borrow().val + l_skipped + r_skipped;
+            (skipped.max(robbed), skipped)
         }
     }
 }
