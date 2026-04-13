@@ -89,6 +89,7 @@ mod symmetry {
         const WIDTH: usize = 26;
         // symmetry 版本的 dp[ii][ch] 代表主手指在 ii 位置 (ii 位置已经被选择了), 副手指在 ch 字符上,
         // 和 non-symmetry 版本的区别是, ii 位置是否已经被选择了
+        // 因为没理清这一点, 卡了挺长时间
         let mut dp = vec![vec![i32::MAX / 2; WIDTH + 1]; length];
         for ch in 0..WIDTH + 1 {
             dp[length - 1][ch] = 0;
