@@ -8,6 +8,8 @@ pub struct TreeNode {
     pub right: Option<Rc<RefCell<TreeNode>>>,
 }
 
+// type Tree = Option<Rc<RefCell<TreeNode>>>;
+
 impl TreeNode {
     #[inline]
     pub fn new(val: i32) -> Self {
