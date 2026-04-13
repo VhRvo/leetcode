@@ -101,6 +101,7 @@ mod lc3653;
 mod lc3655;
 mod lc3740;
 mod lc3741;
+mod lc337;
 mod lc377;
 mod lc387;
 mod lc419;
